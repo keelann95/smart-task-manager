@@ -20,7 +20,7 @@ router.post("/add", async (req, res) => {
 
 router.get("/all", async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const tasks = await Task.find().sort({urgencyScore:-1});
     res.status(200).json(tasks);
     console.log(tasks);
   } catch (error) {
