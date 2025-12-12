@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const { analyzeTask } = require("../utils/ai"); 
+
  const Task = require('../models/Task')
 require('body-parser')
  router.post('/add', async (req,res)=>{
     try {
-        const {title, description, date, priority, status} = req.body
-    const task = new Task({title, description, date, priority, status})
+        const {title, description, dueDate} = req.body
+        // 🔥 Get AI priority + reason
+    const { priority, ai_reason } = await analyzeTask(title, description);
+
+
+        const task = new Task({title, description, dueDate, priority, ai_reason})
     const savedTask = await task.save()
     res.status(200).json(savedTask)
     } catch (error) {
