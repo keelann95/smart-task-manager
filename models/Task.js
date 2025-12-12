@@ -6,6 +6,8 @@ const taskSchema = new mongoose.Schema({
   dueDate: Date,
   priority: { type: String, default: "Medium" },
   ai_reason: String, // explanation from AI
+   category: String,
+   subtasks: [String], 
   estimatedTime: String, // e.g. "2 hours", "1 day"
   createdAt: {
     type: Date,
