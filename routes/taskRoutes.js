@@ -8,9 +8,9 @@ router.post("/add", async (req, res) => {
   try {
     const { title, description, dueDate } = req.body;
     // 🔥 Get AI priority + reason
-    const { priority, ai_reason, estimatedTime, category,subtasks } = await analyzeTask(title, description);
+    const { priority, ai_reason, estimatedTime, category,subtasks ,urgencyScore} = await analyzeTask(title, description);
 
-    const task = new Task({ title, description, dueDate, priority, ai_reason,estimatedTime, category,subtasks });
+    const task = new Task({ title, description, dueDate, priority, ai_reason,estimatedTime, category,subtasks,urgencyScore });
     const savedTask = await task.save();
     res.status(200).json(savedTask);
   } catch (error) {

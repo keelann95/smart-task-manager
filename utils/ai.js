@@ -16,13 +16,14 @@ Analyze the task below and determine:
 3. Estimated time to complete the task (short format like '2 hours', '1 day', '30 minutes').
 4. Category: Choose one from School, Work, Personal, Fitness, Finance, Tech, Creative.
 5. Subtasks: Break the task into smaller actionable steps as an array of strings.
+6. Urgency score: Assign a numeric urgency from 1 (low) to 100 (high).
 
 
 Task Title: ${title}
 Task Description: ${description}
 
 Return JSON EXACTLY like this:
-{"priority": "High", "reason": "Because ...", "estimatedTime": "2 hours", "category": "School","subtasks": ["Step 1", "Step 2"]}
+{"priority": "High", "reason": "Because ...", "estimatedTime": "2 hours", "category": "School","subtasks": ["Step 1", "Step 2"], "urgencyScore": 85}
 `;
   const completion = await client.chat.completions.create({
     model: "gpt-4o-mini", // fast + cheap + good
@@ -41,6 +42,8 @@ Return JSON EXACTLY like this:
       estimatedTime: parsed.estimatedTime,
       category: parsed.category,
       subtasks: parsed.subtasks,
+        urgencyScore: parsed.urgencyScore,
+
     };
   } catch (err) {
     console.error("AI JSON parse error:", text);
@@ -50,6 +53,7 @@ Return JSON EXACTLY like this:
       estimatedTime: "Unknown",
       category: "Uncategorized",
       subtasks: [],
+      urgencyScore: 50,
     };
   }
 }
