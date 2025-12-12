@@ -6,6 +6,7 @@ const taskSchema = new mongoose.Schema({
   dueDate: Date,
   priority: { type: String, default: "Medium" },
   ai_reason: String, // explanation from AI
+  estimatedTime: String, // e.g. "2 hours", "1 day"
   createdAt: {
     type: Date,
     default: () => new Date(new Date().getTime() + 3 * 60 * 60 * 1000),
