@@ -9,6 +9,7 @@ const taskSchema = new mongoose.Schema({
    category: String,
    subtasks: [String], 
     urgencyScore: Number,
+     suggestions: [String],
   estimatedTime: String, // e.g. "2 hours", "1 day"
   createdAt: {
     type: Date,

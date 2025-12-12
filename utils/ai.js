@@ -17,13 +17,14 @@ Analyze the task below and determine:
 4. Category: Choose one from School, Work, Personal, Fitness, Finance, Tech, Creative.
 5. Subtasks: Break the task into smaller actionable steps as an array of strings.
 6. Urgency score: Assign a numeric urgency from 1 (low) to 100 (high).
+7. Smart suggestions: Provide 2-5 actionable tips or ideas to complete the task efficiently (array of strings).
 
 
 Task Title: ${title}
 Task Description: ${description}
 
 Return JSON EXACTLY like this:
-{"priority": "High", "reason": "Because ...", "estimatedTime": "2 hours", "category": "School","subtasks": ["Step 1", "Step 2"], "urgencyScore": 85}
+{"priority": "High", "reason": "Because ...", "estimatedTime": "2 hours", "category": "School","subtasks": ["Step 1", "Step 2"], "urgencyScore": 85, "suggestions": ["Tip 1", "Tip 2"]}
 `;
   const completion = await client.chat.completions.create({
     model: "gpt-4o-mini", // fast + cheap + good
@@ -43,6 +44,7 @@ Return JSON EXACTLY like this:
       category: parsed.category,
       subtasks: parsed.subtasks,
         urgencyScore: parsed.urgencyScore,
+        suggestions: parsed.suggestions,
 
     };
   } catch (err) {
@@ -54,6 +56,7 @@ Return JSON EXACTLY like this:
       category: "Uncategorized",
       subtasks: [],
       urgencyScore: 50,
+      suggestions: [],
     };
   }
 }
