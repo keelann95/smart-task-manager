@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= task.title %> - Smart Task Manager</title>
+
+    <link rel="stylesheet" href="/css/style.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container">
+        <a href="/" class="logo">⚡ Smart Task Manager</a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">Dashboard</a>
+          <a href="/tasks/new" class="nav-link nav-link-primary">+ New Task</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="details-page">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="/" class="breadcrumb-link">Dashboard</a>
+          <span>/</span>
+          <span>Task Details</span>
+        </div>
+
+        <% const priority = task.priority || 'Low'; const urgency =
+        task.urgencyScore || 0; const subtasks = task.subtasks || []; %>
+
+        <!-- HEADER -->
+        <div class="details-header">
+          <h1><%= task.title %></h1>
+
+          <div class="details-badges">
+            <span
+              class="badge badge-priority priority-<%= priority.toLowerCase() %>"
+            >
+              <%= priority %> Priority
+            </span>
+
+            <span
+              class="badge badge-status <%= task.completed ? 'completed' : 'pending' %>"
+            >
+              <%= task.completed ? 'Completed' : 'Pending' %>
+            </span>
+          </div>
+
+          <p>
+            <strong>Category:</strong> <%= task.category || 'Uncategorized' %>
+          </p>
+          <p><strong>Urgency Score:</strong> <%= urgency %>/100</p>
+        </div>
+
+        <div class="details-grid">
+          <!-- MAIN -->
+          <div class="details-main">
+            <div class="details-card">
+              <h2>Description</h2>
+              <p><%= task.description || 'No description provided.' %></p>
+            </div>
+
+            <div class="details-card ai-card">
+              <h2>🤖 AI Reasoning</h2>
+              <p><%= task.ai_reason || 'No AI reasoning available.' %></p>
+            </div>
+
+            <!-- SUBTASKS -->
+            <div class="details-card">
+              <h2>Subtasks</h2>
+
+              <% if (subtasks.length === 0) { %>
+              <p>No subtasks added.</p>
+              <% } else { %>
+              <ul class="subtask-list">
+                <% subtasks.forEach(subtask => { %>
+                <li>✅ <%= subtask %></li>
+                <% }) %>
+              </ul>
+              <% } %>
+            </div>
+
+            <!-- COMPLETE / UNCOMPLETE -->
+            <% if (!task.completed) { %>
+            <div class="status-actions-card">
+              <form action="/tasks/<%= task._id %>/complete" method="POST" class="complete-form">
+  <button type="submit" class="btn btn-primary">
+    ✅ Mark as Completed
+  </button>
+</form>
+            </div>
+            <% } else { %>
+            <div class="completion-card">
+              <h2>🎉 Task Completed</h2>
+              <p>Great job finishing this task.</p>
+            </div>
+            <% } %>
+          </div>
+
+          <!-- SIDEBAR -->
+          <div class="details-sidebar">
+            <div class="sidebar-card">
+              <h3>Task Info</h3>
+
+              <p>
+                📅 Due Date: <%= task.dueDate ? new
+                Date(task.dueDate).toLocaleDateString() : 'No due date' %>
+              </p>
+
+              <p>⏱ Estimated Time: <%= task.estimatedTime || '—' %></p>
+
+              <p>
+                🕒 Created: <%= new Date(task.createdAt).toLocaleDateString() %>
+              </p>
+            </div>
+
+            <div class="sidebar-card danger-zone">
+              <h3>Danger Zone</h3>
+
+             <div class="task-actions">
+  <form
+    action="/tasks/<%= task._id %>?_method=DELETE"
+    method="POST"
+    onsubmit="return confirm('Are you sure you want to delete this task?')"
+  >
+    <button type="submit" class="btn btn-danger">
+      🗑️ Delete Task
+    </button>
+  </form>
+
+  <a href="/tasks/<%= task._id %>/edit" class="btn btn-secondary">
+    ✏️ Edit Task
+  </a>
+</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

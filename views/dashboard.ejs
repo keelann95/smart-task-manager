@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Smart Task Manager</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-content">
+        <a href="/" class="logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">Smart Task Manager</span>
+        </a>
+        <div class="nav-links">
+          <a href="/" class="nav-link active">Dashboard</a>
+          <a href="/tasks/new" class="nav-link nav-link-primary">+ New Task</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+
+      <div class="dashboard-header">
+        <h1>Task Dashboard</h1>
+        <p>AI-powered task prioritization and management</p>
+        <a href="/tasks/new" class="btn btn-primary">
+          <span class="btn-icon">+</span> Create New Task
+        </a>
+      </div>
+
+      <% if (!tasks || tasks.length === 0) { %>
+        <div class="empty-state">
+          <div class="empty-icon">📝</div>
+          <h2>No tasks yet</h2>
+          <p>Create your first AI-powered task to get started</p>
+          <a href="/tasks/new" class="btn btn-primary">Create Task</a>
+        </div>
+      <% } else { %>
+
+        <div class="tasks-grid">
+          <% tasks.forEach(task => { 
+            const priority = task.priority ? task.priority.toLowerCase() : 'low';
+            const status = task.completed ? "completed" : task.status || "pending";
+          %>
+
+          <div class="task-card priority-<%= priority %> status-<%= status %>">
+
+            <div class="task-header">
+              <h3 class="task-title"><%= task.title %></h3>
+
+              <div class="task-badges">
+                <span class="badge badge-priority priority-<%= priority %>">
+                  <% if (priority === 'urgent') { %>🔴<% } %>
+                  <% if (priority === 'high') { %>🟠<% } %>
+                  <% if (priority === 'medium') { %>🟡<% } %>
+                  <% if (priority === 'low') { %>🟢<% } %>
+                  <%= priority.charAt(0).toUpperCase() + priority.slice(1) %>
+                </span>
+
+                <span class="badge badge-status status-<%= status %>">
+                  <%= status.replace('_', ' ').charAt(0).toUpperCase() + status.replace('_', ' ').slice(1) %>
+                </span>
+              </div>
+            </div>
+
+            <% if (task.description) { %>
+              <p class="task-description"><%= task.description.length > 120 ? task.description.substring(0, 120) + '...' : task.description %></p>
+            <% } %>
+
+            <div class="task-meta">
+              <span class="meta-item">⏱️ <%= task.estimatedTime %> min</span>
+
+              <% if (task.dueDate) { %>
+                <span class="meta-item">📅 <%= new Date(task.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) %></span>
+              <% } %>
+            </div>
+
+            <% if (task.ai_reason) { %>
+            <div class="task-ai">
+              <strong>AI Reason:</strong>
+              <p><%= task.ai_reason %></p>
+            </div>
+            <% } %>
+
+            <div class="task-urgency">
+              <strong>Urgency Score:</strong> <%= task.urgencyScore %>/100
+            </div>
+
+            <div class="task-actions">
+<a href="/tasks/<%= task._id %>" class="btn btn-secondary">View Details</a>
+            </div>
+
+          </div>
+
+          <% }); %>
+        </div>
+
+      <% } %>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Built with AI-powered intelligence</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

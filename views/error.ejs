@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error - Smart Task Manager</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-content">
+        <a href="/" class="logo">
+          <span class="logo-icon">⚡</span>
+          <span class="logo-text">Smart Task Manager</span>
+        </a>
+        <div class="nav-links">
+          <a href="/" class="nav-link">Dashboard</a>
+          <a href="/tasks/new" class="nav-link nav-link-primary">
+            <span class="plus-icon">+</span> New Task
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <div class="container">
+      <div class="error-page">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title">Oops! Something went wrong</h1>
+        <p class="error-message">
+          <% if (typeof error !== 'undefined' && error) { %>
+            <%= error %>
+          <% } else { %>
+            An unexpected error occurred. Please try again.
+          <% } %>
+        </p>
+        <a href="/" class="btn btn-primary">Back to Dashboard</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Built with AI-powered intelligence</p>
+    </div>
+  </footer>
+</body>
+</html>

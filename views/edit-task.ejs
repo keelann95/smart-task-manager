@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Task - Smart Task Manager</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container">
+    <a href="/" class="logo">⚡ Smart Task Manager</a>
+    <div class="nav-links">
+      <a href="/" class="nav-link">Dashboard</a>
+      <a href="/tasks/new" class="nav-link nav-link-primary">+ New Task</a>
+    </div>
+  </div>
+</nav>
+
+<main class="main-content">
+  <div class="container">
+
+    <h1>Edit Task</h1>
+
+    <form
+      action="/tasks/<%= task._id %>?_method=PUT"
+      method="POST"
+      class="task-form"
+    >
+
+      <label>Title</label>
+      <input
+        type="text"
+        name="title"
+        value="<%= task.title %>"
+        required
+      />
+
+      <label>Description</label>
+      <textarea name="description"><%= task.description %></textarea>
+
+      <label>Due Date</label>
+      <input
+        type="date"
+        name="dueDate"
+        value="<%= task.dueDate ? task.dueDate.toISOString().split('T')[0] : '' %>"
+      />
+
+      <label>Priority</label>
+      <select name="priority">
+        <% ['Low','Medium','High','Urgent'].forEach(p => { %>
+          <option value="<%= p %>" <%= task.priority === p ? 'selected' : '' %>>
+            <%= p %>
+          </option>
+        <% }) %>
+      </select>
+
+      <label>Category</label>
+      <input type="text" name="category" value="<%= task.category %>" />
+
+      <label>Estimated Time</label>
+      <input
+        type="text"
+        name="estimatedTime"
+        value="<%= task.estimatedTime %>"
+      />
+
+      <label>Subtasks</label>
+      <% if (task.subtasks && task.subtasks.length) { %>
+        <% task.subtasks.forEach(subtask => { %>
+          <input type="text" name="subtasks" value="<%= subtask %>" />
+        <% }) %>
+      <% } %>
+      <input type="text" name="subtasks" placeholder="Add new subtask" />
+
+      <div class="form-actions">
+        <a href="/tasks/<%= task._id %>" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-primary">💾 Save Changes</button>
+      </div>
+
+    </form>
+
+  </div>
+</main>
+
+</body>
+</html>
