@@ -4,62 +4,119 @@ const { analyzeTask } = require("../utils/ai");
 
 const Task = require("../models/Task");
 require("body-parser");
-router.post("/add", async (req, res) => {
+
+
+router.get("/new", (req, res) => {
+  res.render("add-task");
+});
+
+router.post("/", async (req, res) => {
   try {
     const { title, description, dueDate } = req.body;
     // 🔥 Get AI priority + reason
     const { priority, ai_reason, estimatedTime, category,subtasks ,urgencyScore, suggestions} = await analyzeTask(title, description);
 
     const task = new Task({ title, description, dueDate, priority, ai_reason,estimatedTime, category,subtasks,urgencyScore,suggestions });
-    const savedTask = await task.save();
-    res.status(200).json(savedTask);
+     await task.save();
+     res.redirect('/');
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 router.get("/all", async (req, res) => {
   try {
     const tasks = await Task.find().sort({urgencyScore:-1});
-    res.status(200).json(tasks);
-    console.log(tasks);
+      res.render("dashboard", { tasks });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-router.get("/task/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: "Task not found" });
-    res.status(200).json(task);
+    if (!task) {
+      return res.status(404).render('error', { error: 'Task not found' });
+    }
+    res.render('task-detail', { task });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).render('error', { error: 'Unable to load task' });
   }
 });
 
-router.put("/tasks/:id", async (req, res) => {
-  try {
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+router.post('/:id/complete', async (req, res) => {
+  await Task.findByIdAndUpdate(req.params.id, { completed: true });
+  res.redirect(`/tasks/${req.params.id}`);
+});
 
-    if (!updatedTask)
-      return res.status(404).json({ message: "Task not found" });
-    res.status(200).json(updatedTask);
+
+router.put("/:id", async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      dueDate,
+      priority,
+      category,
+      estimatedTime,
+      subtasks
+    } = req.body;
+
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      {
+        title,
+        description,
+        dueDate,
+        priority,
+        category,
+        estimatedTime,
+        subtasks: Array.isArray(subtasks)
+          ? subtasks
+          : subtasks
+          ? [subtasks]
+          : [],
+      },
+      { new: true }
+    );
+
+    if (!updatedTask) {
+      return res.status(404).render("error", { error: "Task not found" });
+    }
+
+    // ✅ redirect back to details page
+    res.redirect(`/tasks/${updatedTask._id}`);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+    res.status(500).render("error", { error: "Failed to update task" });
   }
 });
 
-router.delete("/tasks/:id", async (req, res) => {
+router.get("/:id/edit", async (req, res) => {
   try {
-    const deletedTask = await Task.findByIdAndDelete(req.params.id);
-    if (!deletedTask)
-      return res.status(404).json({ message: "Task not found" });
-    res.status(200).json({ message: "Task deleted successfully" });
+    const task = await Task.findById(req.params.id);
+    if (!task) {
+      return res.status(404).render("error", { error: "Task not found" });
+    }
+    res.render("edit-task", { task });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).render("error", { error: "Failed to load task" });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    if (!task) {
+      return res.status(404).render("error", { error: "Task not found" });
+    }
+    res.redirect("/");
+  } catch (err) {
+    console.error(err);
+    res.status(500).render("error", { error: "Failed to delete task" });
   }
 });
 
